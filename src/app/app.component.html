@@ -1,0 +1,252 @@
+<h1>{{ title }}</h1>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- age Column -->
+  <ng-container matColumnDef="age">
+    <th mat-header-cell *matHeaderCellDef>age</th>
+    <td mat-cell *matCellDef="let element">{{ element.age }}</td>
+  </ng-container>
+
+  <!-- income Column -->
+  <ng-container matColumnDef="income">
+    <th mat-header-cell *matHeaderCellDef>income</th>
+    <td mat-cell *matCellDef="let element">{{ element.income }}</td>
+  </ng-container>
+
+  <!-- student Column -->
+  <ng-container matColumnDef="student">
+    <th mat-header-cell *matHeaderCellDef>student</th>
+    <td mat-cell *matCellDef="let element">{{ element.student }}</td>
+  </ng-container>
+
+  <!-- credit_rating Column -->
+  <ng-container matColumnDef="credit_rating">
+    <th mat-header-cell *matHeaderCellDef>credit_rating</th>
+    <td mat-cell *matCellDef="let element">{{ element.credit_rating }}</td>
+  </ng-container>
+  <!-- buys_computer Column -->
+  <ng-container matColumnDef="buys_computer">
+    <th mat-header-cell *matHeaderCellDef>buys_computer</th>
+    <td mat-cell *matCellDef="let element">{{ element.buys_computer }}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<h3>Select the fields to add a new tuple</h3>
+
+<div class="ng-container">
+  <mat-form-field>
+    <mat-label>age</mat-label>
+    <mat-select [(value)]="newAge">
+      <mat-option>None</mat-option>
+      <mat-option value="youth">youth</mat-option>
+      <mat-option value="middle_aged">middle_aged</mat-option>
+      <mat-option value="senior">senior</mat-option>
+    </mat-select>
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <mat-label>income</mat-label>
+    <mat-select [(value)]="newIncome">
+      <mat-option>None</mat-option>
+      <mat-option value="low">low</mat-option>
+      <mat-option value="medium">medium</mat-option>
+      <mat-option value="high">high</mat-option>
+    </mat-select>
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <mat-label>student</mat-label>
+    <mat-select [(value)]="newStudent">
+      <mat-option>None</mat-option>
+      <mat-option value="yes">yes</mat-option>
+      <mat-option value="no">no</mat-option>
+    </mat-select>
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <mat-label>credit_rating</mat-label>
+    <mat-select [(value)]="newCredit">
+      <mat-option>None</mat-option>
+      <mat-option value="fair">fair</mat-option>
+      <mat-option value="excellent">excellent</mat-option>
+    </mat-select>
+  </mat-form-field>
+  &nbsp;
+  <mat-form-field>
+    <mat-label>buys_computer</mat-label>
+    <mat-select [(value)]="newBuysComputer">
+      <mat-option>None</mat-option>
+      <mat-option value="no">no</mat-option>
+      <mat-option value="yes">yes</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div class="ng-container">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="add()"
+    [disabled]="this.newBuysComputer == null"
+  >
+    add tuple
+  </button>
+  &nbsp;
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="clear()"
+    [disabled]="!this.added && !this.show"
+  >
+    clear
+  </button>
+  &nbsp;
+  <button mat-raised-button color="primary" (click)="calcEntropy()">
+    Calculate Entropy
+  </button>
+</div>
+&nbsp;
+<div class="cardtable" *ngIf="this.initalCalc">
+  <mat-card class="card">
+    <mat-card-title>
+      <h2>Entropy = {{ this.entropy }}</h2>
+    </mat-card-title>
+    <hr />
+    <mat-card-content>
+      <h3>Age gain = {{ this.ageGain }}</h3>
+      <h3>Income gain = {{ this.incomeGain }}</h3>
+      <h3>Student gain = {{ this.studentGain }}</h3>
+      <h3>Credit_rating gain = {{ this.creditGain }}</h3>
+      <p>
+        Because <strong>{{ this.splittingAttribute }}</strong> has the highest
+        information gain among the attributes, it is selected as the splitting
+        attribute.
+      </p>
+      &nbsp;
+      <div class="ng-container">
+        <table
+          mat-table
+          [dataSource]="decision_tree.youth"
+          class="mat-elevation-z8 tree"
+        >
+          <ng-container matColumnDef="age">
+            <th mat-header-cell *matHeaderCellDef>age</th>
+            <td mat-cell *matCellDef="let element">{{ element.age }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="income">
+            <th mat-header-cell *matHeaderCellDef>income</th>
+            <td mat-cell *matCellDef="let element">{{ element.income }}</td>
+          </ng-container>
+
+          <!-- student Column -->
+          <ng-container matColumnDef="student">
+            <th mat-header-cell *matHeaderCellDef>student</th>
+            <td mat-cell *matCellDef="let element">{{ element.student }}</td>
+          </ng-container>
+
+          <!-- credit_rating Column -->
+          <ng-container matColumnDef="credit_rating">
+            <th mat-header-cell *matHeaderCellDef>credit_rating</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.credit_rating }}
+            </td>
+          </ng-container>
+          <!-- buys_computer Column -->
+          <ng-container matColumnDef="buys_computer">
+            <th mat-header-cell *matHeaderCellDef>buys_computer</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.buys_computer }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        &nbsp;
+        <table
+          mat-table
+          [dataSource]="decision_tree.middle_aged"
+          class="mat-elevation-z8 tree"
+        >
+          <ng-container matColumnDef="age">
+            <th mat-header-cell *matHeaderCellDef>age</th>
+            <td mat-cell *matCellDef="let element">{{ element.age }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="income">
+            <th mat-header-cell *matHeaderCellDef>income</th>
+            <td mat-cell *matCellDef="let element">{{ element.income }}</td>
+          </ng-container>
+
+          <!-- student Column -->
+          <ng-container matColumnDef="student">
+            <th mat-header-cell *matHeaderCellDef>student</th>
+            <td mat-cell *matCellDef="let element">{{ element.student }}</td>
+          </ng-container>
+
+          <!-- credit_rating Column -->
+          <ng-container matColumnDef="credit_rating">
+            <th mat-header-cell *matHeaderCellDef>credit_rating</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.credit_rating }}
+            </td>
+          </ng-container>
+          <!-- buys_computer Column -->
+          <ng-container matColumnDef="buys_computer">
+            <th mat-header-cell *matHeaderCellDef>buys_computer</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.buys_computer }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        &nbsp;
+        <table
+          mat-table
+          [dataSource]="decision_tree.senior"
+          class="mat-elevation-z8 tree"
+        >
+          <ng-container matColumnDef="age">
+            <th mat-header-cell *matHeaderCellDef>age</th>
+            <td mat-cell *matCellDef="let element">{{ element.age }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="income">
+            <th mat-header-cell *matHeaderCellDef>income</th>
+            <td mat-cell *matCellDef="let element">{{ element.income }}</td>
+          </ng-container>
+
+          <!-- student Column -->
+          <ng-container matColumnDef="student">
+            <th mat-header-cell *matHeaderCellDef>student</th>
+            <td mat-cell *matCellDef="let element">{{ element.student }}</td>
+          </ng-container>
+
+          <!-- credit_rating Column -->
+          <ng-container matColumnDef="credit_rating">
+            <th mat-header-cell *matHeaderCellDef>credit_rating</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.credit_rating }}
+            </td>
+          </ng-container>
+          <!-- buys_computer Column -->
+          <ng-container matColumnDef="buys_computer">
+            <th mat-header-cell *matHeaderCellDef>buys_computer</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.buys_computer }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
